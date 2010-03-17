@@ -11,8 +11,8 @@ data <- read.csv('~/src/self/rsys/gold01-09.csv', header=TRUE, stringsAsFactors=
 data <- data[-c(1)]
 
 ## Lets convert the dataset to xts format
-##data$Date <- as.Date(data$Date, "%d-%B-%y")
-##data <- xts(data, order.by=data$Date)
+data$Date <- as.Date(data$Date, "%d-%B-%y")
+data <- xts(data, order.by=data$Date)
 
 returns <- data[, 9]
 target <- returns
@@ -44,6 +44,7 @@ factormodel.tree = function(data, target=NULL, returns=NULL, verbose=TRUE, btsam
       verbose=TRUE, treesInBag, nfeatures)
     pred = predict(savedEnsemble, data[t + horizon, ], type='prob')
     print(pred)
+    return (pred)
   }
 
   ## backtest by looping over the calendar from above
