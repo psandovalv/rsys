@@ -7,7 +7,7 @@ library(xts)
 ### 3. Investigate how classification is used here and try using svms or other classification algorithms
 ### 4. Try this code with high frequency data
 
-data <- read.csv('gold01-09.csv', header=TRUE, stringsAsFactors=FALSE)
+data <- read.csv('~/src/self/rsys/gold01-09.csv', header=TRUE, stringsAsFactors=FALSE)
 data <- data[-c(1)]
 
 ## Lets convert the dataset to xts format
