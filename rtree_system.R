@@ -34,8 +34,9 @@ factormodel.tree = function(data, target=NULL, returns=NULL, verbose=TRUE, btsam
   }
 
   ## generate calendars to backtest over
-  idx = rev(data.frame(target = seq(1, btsamples*skip, skip)))
-  idx = data.frame(idx, data = idx$target+horizon)
+##  idx = rev(data.frame(target = seq(1, btsamples*skip, skip)))
+##  idx = data.frame(idx, data = idx$target+horizon)
+  idx = data.frame(targets = rev(seq(1, btsamples*skip, skip)))
 
   pred1pd = function(t) {
     ## Predict one single period, to be used by the backtester in sapply
