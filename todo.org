@@ -1,0 +1,19 @@
+* Separation of data alignment with prediction algorithm
+We should be able to quickly try out any algorithm without changing
+the way we loop over the data etc.
+
+Not sure how to easily do that. I wonder if R supports something like generators?
+
+* Performance metrics for algorithms should be separated too.
+
+
+* Write some code to generate data sets.
+We should use quantmod to d/l yahoo data and have functions to create
+the necessary datasets.
+
+* Some algorithms to support
+** Stepwise regression
+** Lasso/Ridge
+** svms
+** knn
+** randomForests
