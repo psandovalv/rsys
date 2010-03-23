@@ -30,7 +30,7 @@ Train <- function(features, target, ntrain=30, npred=1, debug=FALSE) {
     train <- df[i:j, ]
 
     if (debug)
-      cat("train ", paste(start(train), end(train), sep = " to "), "\n")
+      cat("training period ", paste(start(train), end(train), sep = " to "), "\n")
 
     mod <- lm(class ~ ., data=train)
     preds[i] <- predict(mod, df[(j + 1), ])
@@ -39,9 +39,25 @@ Train <- function(features, target, ntrain=30, npred=1, debug=FALSE) {
   return(data.frame("actual"=actual, "forecast"=preds))
 }
 
-res <- Train(data, target)
-res$forecast[res$forecast > 0] <- 1
-res$forecast[res$forecast < 0] <- -1
+ErrorRate <- function(df, smooth.forcast=TRUE) {
+    df$forecast[df$forecast > 0] <- 1
+    df$forecast[df$forecast < 0] <- -1
+    error <- sum(df$forecast == df$actual)/nrow(df)
+    cat("Test Error is ", error, "\n")
+    return(error)
+  }
 
-cat("Test Error is ", sum(res$forecast == res$actual)/nrow(res), "\n")
+Main <- function() {
+  res <- Train(data, target, debug=TRUE)
+  ErrorRate(res)
+}
 
+Simulate <- function() {
+  ## Try different training period lengths
+  errors = rep(0, 100)
+  for (i in 1:100) {
+    res <- Train(data, target, ntrain=i, debug=TRUE)
+    errors[i] <- ErrorRate(res)
+  }
+  return(errors)
+}
