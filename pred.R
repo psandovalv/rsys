@@ -39,6 +39,7 @@ Train <- function(features, target, ntrain=30, npred=1, debug=FALSE) {
   return(data.frame("actual"=actual, "forecast"=preds))
 }
 
+
 ErrorRate <- function(df, smooth.forcast=TRUE) {
     df$forecast[df$forecast > 0] <- 1
     df$forecast[df$forecast < 0] <- -1
@@ -55,8 +56,8 @@ Main <- function() {
 Simulate <- function() {
   ## Try different training period lengths
   errors = rep(0, 100)
-  for (i in 1:100) {
-    res <- Train(data, target, ntrain=i, debug=TRUE)
+  for (i in 1:50) {
+    res <- Train(data, target, ntrain=i, debug=FALSE)
     errors[i] <- ErrorRate(res)
   }
   return(errors)
