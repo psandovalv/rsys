@@ -57,8 +57,11 @@ DailyReturns <- function(symbols, start=as.Date("2007-01-01"),
 RollReturns <- function(symbols, start=as.Date("2007-01-01"),
                            end=as.Date("2008-12-31"), ndays=5,
                            verbose=FALSE) {
+  ## Compute nday cummulative rolling returns
   df <- DailyReturns(symbols, start, end, verbose=verbose)
-  return (rollapply(df, ndays, sum, na.pad=TRUE, align="right"))
+  xdf <- as.xts(df)
+  ret <- rollapply(xdf, ndays, sum, na.pad=TRUE, align="right")
+  return (as.data.frame(ret))
 }
 
 
@@ -66,7 +69,7 @@ DailyCorr <- function(symbols, start=as.Date("2007-01-01"),
                       end=as.Date("2008-12-31"), verbose=FALSE) {
 
   df <- DailyReturns(symbols, start, end, verbose=verbose)
-  return (cor(df))
+  return (cor(df, use='na.or.complete'))
 }
 
 
