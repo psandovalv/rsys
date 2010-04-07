@@ -22,7 +22,10 @@ Load <- function(symbol) {
   return (z)
 }
 
-DailyReturns <- function(symbols, start.year=NULL, end.year=NULL, verbose=FALSE) {
+
+DailyReturns <- function(symbols, start=as.Date("2007-01-01"),
+                         end=as.Date("2008-12-31"), verbose=FALSE) {
+
   ## Compute daily log returns
   returns = list()
   for (i in symbols) {
@@ -30,24 +33,42 @@ DailyReturns <- function(symbols, start.year=NULL, end.year=NULL, verbose=FALSE)
     if (verbose)
       cat("Loading data for symbol ", i, "\n")
 
-    z <- Load(i)
-    #z <- try({Load(i)}, silent=T)
+    z <- try({Load(i)}, silent=T)
 
-    returns[[i]]<- dailyReturn(z$close, type="log")
+    ## What if we don't have data for that symbol
+    if ("try-error" %in% class(z))
+      next
+
+    ## What if we don't have enough data
+    if (start(z) > start || end(z) < end)
+      next
+
+    ind <- paste(start, end, sep="/")
+    z <- z[ind]
+    returns[[i]] <- dailyReturn(z$close, type="log")
   }
+
   df <- as.data.frame(returns)
-  colnames(df) <- symbols
+  colnames(df) <- names(returns)
   return (df)
 }
 
-DailyCorr <- function(symbols, start.year=NULL, end.year=NULL) {
-  df <- DailyReturns(symbols, start.year, end.year)
+
+RollReturns <- function(symbols, start=as.Date("2007-01-01"),
+                           end=as.Date("2008-12-31"), ndays=5,
+                           verbose=FALSE) {
+  df <- DailyReturns(symbols, start, end, verbose=verbose)
+  return (rollapply(df, ndays, sum, na.pad=TRUE, align="right"))
+}
+
+
+DailyCorr <- function(symbols, start=as.Date("2007-01-01"),
+                      end=as.Date("2008-12-31"), verbose=FALSE) {
+
+  df <- DailyReturns(symbols, start, end, verbose=verbose)
   return (cor(df))
 }
 
-RollingReturns <- function(daily.returns, ndays=5) {
-  return (rollapply(daily.returns, ndays, sum, na.pad=TRUE, align="right"))
-}
 
 
 ### Symbols with no data have been removed
