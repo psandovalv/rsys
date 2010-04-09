@@ -54,6 +54,20 @@ DailyReturns <- function(symbols, start=as.Date("2007-01-01"),
 }
 
 
+DailyExcessReturn <- function(symbols, start=as.Date("2007-01-01"),
+                              end=as.Date("2008-12-31"), benchmark="GSPC",
+                              verbose=FALSE) {
+  ## Compute daily log returns in excess of that given benchmark
+  if (!benchmark %in% symbols)
+    symbols <- append(symbols, benchmark)
+  df <- DailyReturns(symbols, start, end, verbose=verbose)
+  i <- which(colnames(df) == benchmark)
+  df <- df - df[, i]
+  df[, i] <- NULL
+  return (df)
+}
+
+
 RollReturns <- function(symbols, start=as.Date("2007-01-01"),
                            end=as.Date("2008-12-31"), ndays=5,
                            verbose=FALSE) {
