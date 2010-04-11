@@ -9,10 +9,12 @@ FileName <- function(symbol) {
   return (filename)
 }
 
+
 FilePath <- function(symbol) {
   ## Get the absolute path of the symbol data
   return (paste(DATADIR, FileName(symbol), sep="/"))
 }
+
 
 Load <- function(symbol) {
   ## Load ohlcv data for the symbol and return an xts object
@@ -54,7 +56,7 @@ DailyReturns <- function(symbols, start=as.Date("2007-01-01"),
 }
 
 
-DailyExcessReturn <- function(symbols, start=as.Date("2007-01-01"),
+DailyExcessReturns <- function(symbols, start=as.Date("2007-01-01"),
                               end=as.Date("2008-12-31"), benchmark="GSPC",
                               verbose=FALSE) {
   ## Compute daily log returns in excess of that given benchmark
@@ -65,6 +67,17 @@ DailyExcessReturn <- function(symbols, start=as.Date("2007-01-01"),
   df <- df - df[, i]
   df[, i] <- NULL
   return (df)
+}
+
+
+RollExcessReturns <- function(symbols, start=as.Date("2007-01-01"),
+                              end=as.Date("2008-12-31"), benchmark="GSPC",
+                              ndays=5, verbose=FALSE) {
+  df <- DailyExcessReturns(symbols, start, end, benchmark=benchmark,
+                           verbose=verbose)
+  xdf <- as.xts(df)
+  ret <- rollapply(xdf, ndays, sum, na.pad=TRUE, align="right")
+  return (as.data.frame(ret))
 }
 
 
@@ -85,7 +98,6 @@ DailyCorr <- function(symbols, start=as.Date("2007-01-01"),
   df <- DailyReturns(symbols, start, end, verbose=verbose)
   return (cor(df, use='na.or.complete'))
 }
-
 
 
 ### Symbols with no data have been removed
