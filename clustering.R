@@ -56,6 +56,36 @@ DailyReturns <- function(symbols, start=as.Date("2007-01-01"),
 }
 
 
+DailyClosingPrices <- function(symbols, start=as.Date("2007-01-01"),
+                               end=as.Date("2008-12-31"), verbose=FALSE) {
+
+  prices = list()
+  for (i in symbols) {
+
+    if (verbose)
+      cat("Loading data for symbol ", i, "\n")
+
+    z <- try({Load(i)}, silent=T)
+
+    ## What if we don't have data for that symbol
+    if ("try-error" %in% class(z))
+      next
+
+    ## What if we don't have enough data
+    if (start(z) > start || end(z) < end)
+      next
+
+    ind <- paste(start, end, sep="/")
+    z <- z[ind]
+    prices[[i]] <- z$close
+  }
+
+  df <- as.data.frame(prices)
+  colnames(df) <- names(prices)
+  return (df)
+}
+
+
 DailyExcessReturns <- function(symbols, start=as.Date("2007-01-01"),
                               end=as.Date("2008-12-31"), benchmark="GSPC",
                               verbose=FALSE) {
